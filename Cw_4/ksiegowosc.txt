@@ -1,0 +1,213 @@
+ CREATE SCHEMA IF NOT EXISTS ksiegowosc
+    AUTHORIZATION postgres;
+	
+CREATE TABLE ksiegowosc.pracownicy
+(id_pracownika INT PRIMARY KEY,
+ imie varchar (50) NOT NULL,
+ nazwisko varchar (100) NOT NULL,
+ adres varchar (100) NOT NULL,
+ telefon INT);
+
+CREATE TABLE ksiegowosc.godziny
+(id_godziny INT PRIMARY KEY,
+ data date NOT NULL,
+ liczba_godzin INT NOT NULL,
+ id_pracownika INT NOT NULL,
+ FOREIGN KEY (id_pracownika) REFERENCES ksiegowosc.pracownicy(id_pracownika)
+);
+ 
+ CREATE TABLE ksiegowosc.pensja
+ (id_pensji INT PRIMARY KEY,
+  stanowisko varchar NOT NULL,
+  kwota money NOT NULL);
+ 
+ CREATE TABLE ksiegowosc.premia
+ (id_premii INT PRIMARY KEY,
+ rodzaj varchar,
+ kwota money NOT NULL);
+ 
+ CREATE TABLE ksiegowosc.wynagrodzenie
+ (id_wynagrodzenia INT NOT NULL,
+  data date NOT NULL,
+  id_pracownika INT NOT NULL,
+  id_pensji INT NOT NULL,
+  id_premii INT ,
+ FOREIGN KEY (id_pracownika) REFERENCES ksiegowosc.pracownicy(id_pracownika),
+ FOREIGN KEY (id_pensji) REFERENCES ksiegowosc.pensja(id_pensji),
+ FOREIGN KEY (id_premii) REFERENCES ksiegowosc.premia(id_premii)
+ );
+
+---INSERT
+
+INSERT INTO ksiegowosc.pracownicy VALUES 
+(1, 'Jan', 'Mocny', 'ul. Prosta 1', 739089548),
+(2, 'BArtek', 'Słaby', 'ul. Kresowa 2', 739089544),
+(3, 'AB', 'Słabiutki', 'ul. Kresowa 3', 898989898),
+(4, 'Dee', 'Jawor', 'ul. Kresowa 4', 789789789),
+(5, 'Marcin', 'Marciniak', 'ul. Kresowa 5', 999999999),
+(6, 'Agnieszka', 'Mazur', 'ul. Kresowa 6', 330330330),
+(7, 'Monika', 'Michno', 'ul. Wesoła 8', 666666666),
+(8, 'Łukasz', 'Szymański', 'ul. Piękna 9', 555555555),
+(9, 'Natalia', 'Wójcik', 'ul. Malinowa 10', 101010101);
+	
+INSERT INTO ksiegowosc.pracownicy VALUES (10, 'Mateusz', 'Lis', 'ul. Długa 7');
+
+INSERT INTO ksiegowosc.godziny VALUES 
+(1, '10-08-2023', 10,1),
+(2, '10-07-2023', 10,2),
+(3, '10-06-2023', 10,3),
+(4, '10-05-2023', 10,4),
+(5, '10-04-2023', 10,5),
+(6, '10-03-2023', 10,6),
+(7, '10-02-2023', 10,7),
+(8, '10-01-2023', 10,8),
+(9, '10-12-2022', 10,9),
+(10, '10-11-2022', 10,7);
+
+INSERT INTO ksiegowosc.pensja VALUES 
+(1, 'pracownik biurowy', 10000),
+(2,'budowlaniec', 15000),
+(3, 'pracownik biurowy', 4000),
+(4,'budowlaniec', 7000),
+(5, 'pracownik biurowy', 1000),
+(6,'budowlaniec', 1500),
+(7, 'pracownik biurowy szef', 100000),
+(8,'budowlaniec szef', 150000),
+(9, 'pracownik biurowy szef wszystkich szefów', 1000000),
+(10,'budowlaniec szef wszystkich szefów', 1500000);	
+	
+INSERT INTO ksiegowosc.premia VALUES
+(1,'bąbelek', 10000),
+(2,'500+', 500),
+(3,'mieszkanie+', 10000),
+(4,'pierdyliard+', 500),
+(5,'nowy_start', 10000),
+(6,'komputer', 500),
+(7,'tablet', 10000),
+(8,'nic', 0),
+(9,'nic', 0),
+(10,'nic', 0);
+
+INSERT INTO ksiegowosc.wynagrodzenie VALUES
+(1, '10-08-2023', 1, 1, 1),
+(2,'10-08-2023', 2, 2, 2),
+(3, '10-08-2023', 3, 3, 3),
+(4,'10-08-2023', 4, 4, 4),
+(5, '10-08-2023', 5, 5, 5),
+(6,'10-08-2023', 6, 6, 6),
+(7, '10-08-2023', 7, 7, 7),
+(8,'10-08-2023', 8, 8, 8),
+(9, '10-08-2023', 9, 9, 9),
+(10,'10-08-2023', 10, 10, 10);
+
+---- poprawka
+UPDATE ksiegowosc.wynagrodzenie
+SET id_premii = NULL
+WHERE id_wynagrodzenia = 7;
+
+UPDATE ksiegowosc.wynagrodzenie
+SET id_premii = NULL
+WHERE id_wynagrodzenia = 10;
+
+---5a)
+SELECT id_pracownika, nazwisko 
+FROM ksiegowosc.pracownicy
+
+---b)
+SELECT w.id_pracownika 
+FROM ksiegowosc.wynagrodzenie w
+JOIN ksiegowosc.pensja p ON w.id_pensji = p.id_pensji
+WHERE p.kwota > 1000::money;
+
+---c)
+SELECT w.id_pracownika
+FROM ksiegowosc.wynagrodzenie w
+JOIN ksiegowosc.premia pr ON w.id_premii = pr.id_premii
+JOIN ksiegowosc.pensja pe ON w.id_pensji = pe.id_pensji
+WHERE pr.id_premii IS NULL AND pe.kwota > 2000::money; 
+
+---d)
+SELECT * 
+FROM ksiegowosc.pracownicy
+WHERE imie LIKE 'B%';
+
+---e)
+SELECT *
+FROM ksiegowosc.pracownicy
+WHERE nazwisko LIKE '%n%' AND imie LIKE '%a';
+
+---f)
+SELECT imie,nazwisko, liczba_godzin-160 AS nadgodziny
+FROM ksiegowosc.pracownicy p
+JOIN ksiegowosc.godziny g ON p.id_pracownika = g.id_pracownika
+WHERE liczba_godzin > 160;
+
+---g)
+SELECT imie,nazwisko
+FROM ksiegowosc.wynagrodzenie w
+JOIN ksiegowosc.pracownicy p ON w.id_pracownika = p.id_pracownika
+JOIN ksiegowosc.pensja pen ON w.id_pensji = pen.id_pensji
+WHERE pen.kwota BETWEEN 1500::money AND 3000::money;
+
+---h)
+SELECT imie,nazwisko
+FROM ksiegowosc.wynagrodzenie w
+JOIN ksiegowosc.pracownicy p ON w.id_pracownika = p.id_pracownika
+JOIN ksiegowosc.godziny g ON w.id_pracownika = g.id_pracownika
+WHERE liczba_godzin-160 > 0 AND w.id_premii IS NULL;
+
+---i)
+SELECT imie,nazwisko, stanowisko, kwota AS wynagordzenie
+FROM ksiegowosc.pracownicy p
+JOIN ksiegowosc.wynagrodzenie w ON p.id_pracownika = w.id_pracownika
+JOIN ksiegowosc.pensja pen ON w.id_pensji = pen.id_pensji
+ORDER BY pen.kwota;
+
+---j)
+SELECT imie,nazwisko, stanowisko, pen.kwota AS wynagordzenie, pr.kwota AS premia
+FROM ksiegowosc.pracownicy p
+JOIN ksiegowosc.wynagrodzenie w ON p.id_pracownika = w.id_pracownika
+JOIN ksiegowosc.pensja pen ON w.id_pensji = pen.id_pensji
+JOIN ksiegowosc.premia pr ON w.id_premii = pr.id_premii
+ORDER BY pen.kwota DESC, pr.kwota DESC;
+
+---k)
+SELECT stanowisko, COUNT(stanowisko) AS liczba_pracownikow
+FROM ksiegowosc.pensja
+GROUP BY stanowisko;
+
+---l)
+SELECT stanowisko, AVG(CAST(pe.kwota AS DECIMAL(10,2))) AS srednia_placa, 
+MIN(CAST(pe.kwota AS DECIMAL(10,2))) AS minimalna_placa, MAX(CAST(pe.kwota AS DECIMAL(10,2))) AS maksymalna_placa
+FROM ksiegowosc.pensja pe
+WHERE stanowisko = 'budowlaniec'
+GROUP BY stanowisko;
+
+---m)
+SELECT SUM(CAST(pen.kwota AS DECIMAL(10,2))) AS suma_wynagrodzen
+FROM ksiegowosc.pensja pen;
+
+---n)
+SELECT stanowisko, SUM(CAST(pen.kwota AS DECIMAL(10,2))) AS suma_stanowiska
+FROM ksiegowosc.pensja pen
+GROUP BY stanowisko;
+
+---o)
+SELECT pen.stanowisko, COUNT(*) AS liczba_premii
+FROM ksiegowosc.wynagrodzenie w
+JOIN ksiegowosc.premia pr ON w.id_premii = pr.id_premii
+JOIN ksiegowosc.pensja pen ON w.id_pensji = pen.id_pensji
+GROUP BY pen.stanowisko;
+
+---p)
+DELETE FROM ksiegowosc.pracownicy
+WHERE id_pracownika IN (
+  SELECT p.id_pracownika
+  FROM ksiegowosc.pracownicy p
+  JOIN ksiegowosc.wynagrodzenie w ON w.id_pracownika = p.id_pracownika
+  JOIN ksiegowosc.pensja pe ON w.id_pensji = pe.id_pensji
+  WHERE pe.kwota < 1200::money
+);
+
+
+#przepraszam, nie zdążyłem zrobić przed północą komentarzy
