@@ -8,6 +8,8 @@ CREATE TABLE ksiegowosc.pracownicy
  adres varchar (100) NOT NULL,
  telefon INT);
 
+COMMENT ON TABLE ksiegowosc.pracownicy IS 'Tabela przechowująca główne informacje na temat pracownika'
+
 CREATE TABLE ksiegowosc.godziny
 (id_godziny INT PRIMARY KEY,
  data date NOT NULL,
@@ -15,19 +17,25 @@ CREATE TABLE ksiegowosc.godziny
  id_pracownika INT NOT NULL,
  FOREIGN KEY (id_pracownika) REFERENCES ksiegowosc.pracownicy(id_pracownika)
 );
- 
+
+COMMENT ON TABLE ksiegowosc.godziny IS 'Tabela dotycząca wszystkiego związanego z czasem pracy, połączenie bezpośrednie do tabeli pracownicy!!'
+
  CREATE TABLE ksiegowosc.pensja
  (id_pensji INT PRIMARY KEY,
   stanowisko varchar NOT NULL,
   kwota money NOT NULL);
- 
+
+COMMENT ON TABLE ksiegowosc.pensja IS 'Tabela przechowująca dane na temat podstawowej pensji oraz stanowiska na którym dana osoba pracuje'
+
  CREATE TABLE ksiegowosc.premia
  (id_premii INT PRIMARY KEY,
  rodzaj varchar,
  kwota money NOT NULL);
- 
+
+COMMENT ON TABLE ksiegowosc.premia IS 'Tabela przechowująca dane na temat premii'
+
  CREATE TABLE ksiegowosc.wynagrodzenie
- (id_wynagrodzenia INT NOT NULL,
+ (id_wynagrodzenia INT PRIMARY KEY,
   data date NOT NULL,
   id_pracownika INT NOT NULL,
   id_pensji INT NOT NULL,
@@ -36,6 +44,8 @@ CREATE TABLE ksiegowosc.godziny
  FOREIGN KEY (id_pensji) REFERENCES ksiegowosc.pensja(id_pensji),
  FOREIGN KEY (id_premii) REFERENCES ksiegowosc.premia(id_premii)
  );
+
+COMMENT ON TABLE ksiegowosc.wynagrodzenie IS 'Główna tabela łącząca wszystkie tabele, WAŻNE: id_premii może być równe NULL!!'
 
 ---INSERT
 
