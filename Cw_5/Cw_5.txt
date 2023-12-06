@@ -1,0 +1,58 @@
+
+// Wypisz zależności funkcyjne według wzoru:
+Id_produktu -> nazwa_produktu, cena_produktu, VAT
+
+Zależności funkcyjne:
+
+Id_produktu -> nazwa_produktu
+
+// Dla vatu:
+// każdy produkt ma unikalny VAT
+// nazwa_produktu i id_produktu są unikalne, zatem obywie wskazują na VAT
+
+    Id_produktu -> VAT                              
+    nazwa_produktu -> VAT
+
+// Dla vatu, ceny brutto i netto:
+// znając conajmniej 2 rzeczy jesteśmy w stanie policzyć każdą z nich
+
+    suma_netto, VAT -> suma_brutto                 
+    Id_produktu -> nazwa_produktu, cena_produktu, VAT, ilość, suma_netto, suma_brutto    
+
+// znając Id_produktu lub nazwa_produktu, jako że są unikalne
+// jesteśmy w stanie wywnioskować reszte atrybutów, bo na dany dzień są sumowane rzeczy jakie zostały zamówione oraz ich ilość   
+
+// W skrócie można te tabele rozłożyć na kilka mniejszych tabel:
+
+    zamowienia( id_produktu, ilość, id_klienta, data_zamowienia ) 
+    produkt( id_produktu, nazwa_produktu, cena_produktu, VAT)
+    klient( id_klienta, nazwa_klienta )
+
+// sumy brutto i netto nie trzeba przechowywać, bo można ją wyliczyć, natomiast jeśliby się chciało ją przechowywać to:
+
+    sumy( id_produktu, id_klienta, suma_netto, suma_brutto ) 
+
+
+
+
+
+# 2. Wypisz wszystkie klucze kandydujące:
+
+    id_produktu, id_klienta, data_zamowienia
+
+
+
+
+
+
+// Zależności funkcyjne:
+
+    id_pomieszczenia -> numer_pomieszczenia, id_budynku, powierzchnia, liczba_okien, liczba_drzwi
+    miasto, ulica -> kod_pocztowy
+    id_budynku -> miasto, ulica, kod_pocztowy
+
+// wydaje mi się że więcej nie trzeba
+
+// klucze kandydujące:
+
+    id_pomieszczenia, (id_budynku, numer_pomieszczenia)
