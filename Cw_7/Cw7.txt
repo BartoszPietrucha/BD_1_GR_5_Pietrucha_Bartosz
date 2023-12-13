@@ -1,0 +1,80 @@
+CREATE OR REPLACE FUNCTION fibon( n INT )
+RETURNS INT AS $$
+BEGIN
+	IF n <= 0 THEN
+		RETURN 0;
+	ELSIF n = 1 THEN
+		RETURN 1;
+	ELSE
+		RETURN fibon(n-1) + fibon(n-2);
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE print_fibon(n INT)
+AS $$
+DECLARE 
+	counter INT := 1;
+	fibi INT;
+BEGIN
+	WHILE counter <= n LOOP
+		fibi := fibon(counter);
+		RAISE NOTICE 'liczba Fibonaciego %: %', counter, fibi;
+		counter := counter + 1;
+	END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CALL print_fibon(10);
+
+
+CREATE OR REPLACE FUNCTION uppercase_surname()
+RETURNS TRIGGER AS $$
+BEGIN
+	NEW.surname := UPPER(NEW.lastname);
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_ins_upper_surn
+BEFORE INSERT ON person.person
+FOR EACH ROW
+EXECUTE FUNCTION uppercase_surname();
+
+
+
+CREATE OR REPLACE FUNCTION CheckTaxChange() RETURNS TRIGGER AS $$
+DECLARE
+	oldTaxRate DECIMAL(18,2);
+	newTaxRate DECIMAL(18,2);
+	percentageChange DECIMAL(18,2);
+BEGIN
+	oldTaxRate := OLD.TaxRate;
+	newTaxRate := NEW.TaxRate;
+	
+	percentageChange := ABS((newTaxRate - oldTaxRate) / oldTaxRate) * 100;
+	
+	IF percentageChange > 30 THEN
+		RAISE EXCEPTION 'Zmiana procentowa przekracza 30%%';
+	END IF;
+	
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER taxRateMonitoring
+BEFORE UPDATE ON sales.salestaxrate
+FOR EACH ROW
+EXECUTE FUNCTION CheckTaxChange();
+		
+	
+
+
+
+
+
+
+
+
+	
