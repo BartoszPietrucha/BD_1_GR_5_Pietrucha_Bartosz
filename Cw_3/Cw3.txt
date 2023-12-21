@@ -1,0 +1,119 @@
+INSERT INTO pracownicy VALUES (1, 'Bartosz', 'Mocny','35-101', '739089547');
+INSERT INTO pracownicy VALUES (2, 'Barti', 'Słaby','35-147', '739089789');
+INSERT INTO pracownicy VALUES (3, 'KRzysiek', 'Mocny','35-101', '739089547');
+INSERT INTO pracownicy VALUES (4, 'Bartosz', 'Mocny','35-101', '739089547');
+INSERT INTO pracownicy VALUES (5, 'Bartosz', 'Mocny','35-101', '739089547');
+INSERT INTO pracownicy VALUES (6, 'Bartosz', 'Mocny','35-101', '739089547');
+INSERT INTO pracownicy VALUES (7, 'Bartosz', 'Mocny','35-101', '739089547');
+INSERT INTO pracownicy VALUES (8, 'Bartosz', 'Mocny','35-101', '739089547');
+INSERT INTO pracownicy VALUES (9, 'Bartosz', 'Mocny','35-101', '739089547');
+INSERT INTO pracownicy VALUES (10, 'Bartosz', 'Mocny','35-101', '739089547');
+
+INSERT INTO godziny VALUES (1, '10-08-2023', 10,1);
+INSERT INTO godziny VALUES (2, '10-08-2027', 10,2);
+INSERT INTO godziny VALUES (3, '10-08-2021', 10,3);
+INSERT INTO godziny VALUES (4, '10-08-2028', 10,7);
+INSERT INTO godziny VALUES (5, '10-08-2024', 10,8);
+INSERT INTO godziny VALUES (6, '10-08-2021', 10,4);
+INSERT INTO godziny VALUES (7, '10-08-2024', 10,5);
+INSERT INTO godziny VALUES (8, '10-08-2003', 10,1);
+INSERT INTO godziny VALUES (9, '10-08-2004', 10,2);
+INSERT INTO godziny VALUES (10, '10-08-2005', 10,1);
+
+INSERT INTO pensje VALUES (1, 'pracownik', 1000,1);
+INSERT INTO pensje VALUES (2, 'pracownikb', 1000,2);
+INSERT INTO pensje VALUES (3, 'pracownikc', 1000,3);
+INSERT INTO pensje VALUES (4, 'pracownikd', 1000,4);
+INSERT INTO pensje VALUES (5, 'pracownike', 1000,5);
+INSERT INTO pensje VALUES (6, 'prpracownik', 1000,6);
+INSERT INTO pensje VALUES (7, 'prapracownik', 1000,7);
+INSERT INTO pensje VALUES (8, 'pracownik', 1000,8);
+INSERT INTO pensje VALUES (9, 'pracownik', 1000,9);
+INSERT INTO pensje VALUES (10, 'stary_pracownik', 1000,10);
+
+INSERT INTO premie VALUES (1, 'start', 1001);
+INSERT INTO premie VALUES (2, 'start', 1002);
+INSERT INTO premie VALUES (3, 'start', 1003);
+INSERT INTO premie VALUES (4, 'start', 1004);
+INSERT INTO premie VALUES (5, 'start', 1009);
+INSERT INTO premie VALUES (6, '500+', 100);
+INSERT INTO premie VALUES (7, 'bąbelek', 1040);
+INSERT INTO premie VALUES (8, 'promyk', 1009);
+INSERT INTO premie VALUES (9, 'bąbelek', 1008);
+INSERT INTO premie VALUES (10, 'bąbelek', 1007);
+
+
+
+
+
+
+
+-- SCHEMA: rozliczenia
+
+-- DROP SCHEMA IF EXISTS rozliczenia ;
+
+CREATE DATABASE firma;
+
+
+CREATE SCHEMA IF NOT EXISTS rozliczenia
+    AUTHORIZATION postgres;
+CREATE TABLE rozliczenia.pracownicy
+(id_pracownika INT PRIMARY KEY NOT NULL,
+ imie varchar (100) NOT NULL,
+ nazwisko varchar (100) NOT NULL,
+ adres varchar (100),
+ telefon INT NOT NULL);
+
+CREATE TABLE godziny
+(id_godziny INT,
+ data date,
+ liczba_godzin INT,
+ id_pracownika INT NOT NULL);
+ 
+ CREATE TABLE pensje
+ (id_pensji INT ,
+  stanowisko varchar,
+  kwota INT,
+  id_premii INT PRIMARY KEY);
+ 
+ CREATE TABLE premie
+ (id_premii INT NOT NULL,
+ rodzaj varchar,
+ kwota money);
+ 
+ CREATE SCHEMA IF NOT EXISTS ksiegowosc
+    AUTHORIZATION postgres;
+	
+CREATE TABLE ksiegowosc.pracownicy
+(id_pracownika INT PRIMARY KEY,
+ imie varchar (100) NOT NULL,
+ nazwisko varchar (100) NOT NULL,
+ adres varchar (100),
+ telefon INT);
+
+CREATE TABLE ksiegowosc.godziny
+(id_godziny INT PRIMARY KEY,
+ data date NOT NULL,
+ liczba_godzin INT NOT NULL,
+ id_pracownika INT NOT NULL);
+ 
+ CREATE TABLE ksiegowosc.pensja
+ (id_pensji INT PRIMARY KEY,
+  stanowisko varchar NOT NULL,
+  kwota money NOT NULL);
+ 
+ CREATE TABLE ksiegowosc.premia
+ (id_premii INT NOT NULL,
+ rodzaj varchar,
+ kwota money NOT NULL);
+ 
+ CREATE TABLE ksiegowosc.wynagrodzenie
+ (id_wynagrodzenia INT NOT NULL,
+  data date NOT NULL,
+  id_pracownika INT NOT NULL,
+  id_godziny INT NOT NULL,
+  id_pensji INT NOT NULL,
+  id_premii INT NOT NULL);
+ 	
+	
+	
